@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Pesanan | DORMAUBI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        .history-section { padding: 100px 5% 60px; background: #fdf2f8; min-height: 100vh; }
+        .history-container { max-width: 800px; margin: 0 auto; }
+        
+        .history-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .order-info h3 { color: var(--primary); margin-bottom: 5px; font-size: 18px; }
+        .order-info p { font-size: 13px; color: #666; margin: 2px 0; }
+        
+        .order-status { text-align: right; }
+        .status-badge {
+            background: var(--light-purple);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .order-total { color: var(--primary); font-weight: bold; font-size: 16px; }
+
+        .empty-state { text-align: center; padding: 50px; color: #999; }
+        .empty-state i { font-size: 50px; margin-bottom: 20px; color: #ddd; }
+
+        .btn-clear {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .btn-clear:hover { background: var(--primary); color: white; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container navbar">
+            <div class="logo">
+                <img src="logo.jpeg" class="nav-logo-img" style="height: 45px;">
+                DORMA<span>UBI</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="checkout.html">Checkout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="history-section">
+        <div class="history-container">
+            <h2 style="color: var(--primary); margin-bottom: 10px;">Riwayat Pesanan</h2>
+            <p style="color: #666; margin-bottom: 30px; font-size: 14px;">Daftar keripik ubi yang baru saja Anda pesan melalui website.</p>
+            
+            <button class="btn-clear" onclick="hapusRiwayat()"><i class="fa-solid fa-trash"></i> Bersihkan Riwayat</button>
+
+            <div id="historyList"></div>
+        </div>
+    </section>
+
+    <script>
+        function tampilkanRiwayat() {
+            const historyList = document.getElementById('historyList');
+            const riwayat = JSON.parse(localStorage.getItem('dormaubi_history')) || [];
+
+            if (riwayat.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-box-open"></i>
+                        <p>Belum ada riwayat pesanan.</p>
+                        <a href="index.html" style="color:var(--primary); text-decoration:none; font-size:14px;">Mulai Belanja Sekarang</a>
+                    </div>
+                `;
+                return;
+            }
+
+            historyList.innerHTML = riwayat.map(item => `
+                <div class="history-card">
+                    <div class="order-info">
+                        <h3>${item.produk}</h3>
+                        <p><i class="fa-solid fa-calendar-days"></i> ${item.tanggal}</p>
+                        <p><i class="fa-solid fa-user"></i> Penerima: ${item.nama}</p>
+                        <p><i class="fa-solid fa-box"></i> Jumlah: ${item.qty} pcs</p>
+                    </div>
+                    <div class="order-status">
+                        <div class="status-badge">Menunggu Konfirmasi WA</div>
+                        <div class="order-total">Rp ${item.total.toLocaleString('id-ID')}</div>
+                        <p style="font-size:10px; color:#999; margin-top:5px;">via ${item.metode}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function hapusRiwayat() {
+            if(confirm("Apakah Anda yakin ingin menghapus semua riwayat pesanan?")) {
+                localStorage.removeItem('dormaubi_history');
+                tampilkanRiwayat();
+            }
+        }
+        tampilkanRiwayat();
+    </script>
+</body>
+</html>
